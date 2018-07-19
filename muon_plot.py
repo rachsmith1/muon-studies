@@ -1,15 +1,7 @@
-
-# coding: utf-8
-
-# In[1]:
-
 from muon_h import *
 
-
-# In[2]:
-
 def makeMuonPlots(data, pb, eb):
-    
+
     #initialize all the plots we're going to make for each pt bin and eta bin
     muon_pt_plot     = StackedPlot("Muon $p_T$",
                                   "$p_T$ [GeV/c]",
@@ -85,10 +77,10 @@ def makeMuonPlots(data, pb, eb):
             for jet in range(data[i]['jet_pt'].size):
                 #cut on the pt bin, the eta bin, and the jet type
                 if (
-                    data[i]['jet_pt'][jet] >= PtBins[pb]["min"]*GeV and 
-                    data[i]['jet_pt'][jet] <  PtBins[pb]["max"]*GeV and 
+                    data[i]['jet_pt'][jet] >= PtBins[pb]["min"]*GeV and
+                    data[i]['jet_pt'][jet] <  PtBins[pb]["max"]*GeV and
 
-                    abs(data[i]['jet_eta'][jet]) >= EtaBins[eb]["min"] and 
+                    abs(data[i]['jet_eta'][jet]) >= EtaBins[eb]["min"] and
                     abs(data[i]['jet_eta'][jet]) <  EtaBins[eb]["max"] and
 
                     data[i]['jet_LabDr_HadF'][jet] == JetType[jt]["pdgId"]
@@ -96,13 +88,13 @@ def makeMuonPlots(data, pb, eb):
                     #for each associated track in that jet
                     for trk in range(data[i]['jet_trk_pt'][jet].size):
                         #check if that track is matched with a muon
-                        if abs(data[i]['jet_trk_pdg_id'][jet][trk])==13: 
+                        if abs(data[i]['jet_trk_pdg_id'][jet][trk])==13:
 
                             #append all the relevant data to the lists we made earlier
-                            muon_pt.append(data[i]['jet_trk_pt'][jet][trk]/GeV) 
+                            muon_pt.append(data[i]['jet_trk_pt'][jet][trk]/GeV)
 
                             deta = data[i]['jet_eta'][jet] - data[i]['jet_trk_eta'][jet][trk]
-                            dphi = data[i]['jet_phi'][jet] - data[i]['jet_trk_phi'][jet][trk]                    
+                            dphi = data[i]['jet_phi'][jet] - data[i]['jet_trk_phi'][jet][trk]
                             muon_deltar.append(np.sqrt(deta*deta + dphi*dphi))
 
                             muon_ptfrac.append(data[i]['jet_trk_pt'][jet][trk]/data[i]['jet_pt'][jet])
@@ -132,4 +124,3 @@ def makeMuonPlots(data, pb, eb):
     muon_zzero_plot.makePlot()
     muon_dsig_plot.makePlot()
     muon_zsig_plot.makePlot()
-
