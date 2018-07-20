@@ -1,6 +1,6 @@
 from muon_h import *
 
-def makeMuonPlots(data, pb, eb):
+def makeMuonPlots(data, jpb, jeb, mpb, meb):
 
     #initialize all the plots we're going to make for each pt bin and eta bin
     muon_pt_plot     = StackedPlot("Muon $p_T$",
@@ -8,56 +8,70 @@ def makeMuonPlots(data, pb, eb):
                                   np.linspace(0,450,50),
                                   True,
                                   True,
-                                  PtBins[pb],
-                                  EtaBins[eb])
+                                  jpb,
+                                  jeb,
+                                  mpb,
+                                  meb)
 
     muon_deltar_plot = StackedPlot("$\Delta R$($\mu$,jet)",
                                   "$\Delta R$",
-                                  np.linspace(0,0.6,50),
+                                  np.linspace(0,0.5,50),
                                   True,
-                                  False,
-                                  PtBins[pb],
-                                  EtaBins[eb])
+                                  True,
+                                  jpb,
+                                  jeb,
+                                  mpb,
+                                  meb)
 
     muon_ptfrac_plot = StackedPlot("${p_T}^{\mu} / {p_T}^{jet}$",
                                   "${p_T}^{\mu} / {p_T}^{jet}$",
                                   np.linspace(0,2,50),
                                   True,
-                                  False,
-                                  PtBins[pb],
-                                  EtaBins[eb])
+                                  True,
+                                  jpb,
+                                  jeb,
+                                  mpb,
+                                  meb)
 
     muon_dzero_plot  = StackedPlot("Muon $d_0$",
                                   "$d_0$ [mm]",
-                                  np.linspace(-1,1,50),
+                                  np.linspace(-6,6,50),
                                   True,
                                   True,
-                                  PtBins[pb],
-                                  EtaBins[eb])
+                                  jpb,
+                                  jeb,
+                                  mpb,
+                                  meb)
 
     muon_zzero_plot  = StackedPlot("Muon $z_0$",
                                   "$z_0$ [mm]",
-                                  np.linspace(-1,1,50),
+                                  np.linspace(-6,6,50),
                                   True,
                                   True,
-                                  PtBins[pb],
-                                  EtaBins[eb])
+                                  jpb,
+                                  jeb,
+                                  mpb,
+                                  meb)
 
     muon_dsig_plot   = StackedPlot("Muon $d_0 / \sigma_{d_0}$",
                                   "$d_0 / \sigma_{d_0}$",
-                                  np.linspace(-0.25,0.25,50),
+                                  np.linspace(0,0.6,50),
                                   True,
                                   True,
-                                  PtBins[pb],
-                                  EtaBins[eb])
+                                  jpb,
+                                  jeb,
+                                  mpb,
+                                  meb)
 
     muon_zsig_plot   = StackedPlot("Muon $z_0 / \sigma_{z_0}$",
                                   "$z_0 / \sigma_{z_0}$",
-                                  np.linspace(-0.25,0.25,50),
+                                  np.linspace(0,0.6,50),
                                   True,
                                   True,
-                                  PtBins[pb],
-                                  EtaBins[eb])
+                                  jpb,
+                                  jeb,
+                                  mpb,
+                                  meb)
 
     #now loop over each type of jet
     for jt in JetType:
@@ -75,20 +89,29 @@ def makeMuonPlots(data, pb, eb):
         for i in range(data.size):
             #for each jet in that event
             for jet in range(data[i]['jet_pt'].size):
-                #cut on the pt bin, the eta bin, and the jet type
+                #cut on the jet pt bin, the jet eta bin, and the jet type
                 if (
-                    data[i]['jet_pt'][jet] >= PtBins[pb]["min"]*GeV and
-                    data[i]['jet_pt'][jet] <  PtBins[pb]["max"]*GeV and
+                    data[i]['jet_pt'][jet] >= jpb[0]*GeV and
+                    data[i]['jet_pt'][jet] <  jpb[1]*GeV and
 
-                    abs(data[i]['jet_eta'][jet]) >= EtaBins[eb]["min"] and
-                    abs(data[i]['jet_eta'][jet]) <  EtaBins[eb]["max"] and
+                    abs(data[i]['jet_eta'][jet]) >= jeb[0] and
+                    abs(data[i]['jet_eta'][jet]) <  jeb[1] and
 
                     data[i]['jet_LabDr_HadF'][jet] == JetType[jt]["pdgId"]
                    ):
                     #for each associated track in that jet
                     for trk in range(data[i]['jet_trk_pt'][jet].size):
                         #check if that track is matched with a muon
-                        if abs(data[i]['jet_trk_pdg_id'][jet][trk])==13:
+                        #and cut on the muon pt bin and muon eta bin
+                        if (
+                            abs(data[i]['jet_trk_pdg_id'][jet][trk])==13 and
+
+                            data[i]['jet_trk_pt'][jet][trk] >= mpb[0]*GeV and
+                            data[i]['jet_trk_pt'][jet][trk] <  mpb[1]*GeV and
+
+                            abs(data[i]['jet_trk_eta'][jet][trk]) >= meb[0] and
+                            abs(data[i]['jet_trk_eta'][jet][trk]) <  meb[1]
+                           ):
 
                             #append all the relevant data to the lists we made earlier
                             muon_pt.append(data[i]['jet_trk_pt'][jet][trk]/GeV)
@@ -99,13 +122,13 @@ def makeMuonPlots(data, pb, eb):
 
                             muon_ptfrac.append(data[i]['jet_trk_pt'][jet][trk]/data[i]['jet_pt'][jet])
 
-                            muon_dzero.append(data[i]['jet_trk_d0'][jet][trk])
+                            muon_dzero.append(data[i]['jet_trk_ip3d_d0'][jet][trk])
 
-                            muon_zzero.append(data[i]['jet_trk_z0'][jet][trk])
+                            muon_zzero.append(data[i]['jet_trk_ip3d_z0'][jet][trk])
 
-                            muon_dsig.append(data[i]['jet_trk_d0'][jet][trk]/data[i]['jet_trk_ip3d_d0sig'][jet][trk])
+                            muon_dsig.append(data[i]['jet_trk_ip3d_d0'][jet][trk]/data[i]['jet_trk_ip3d_d0sig'][jet][trk])
 
-                            muon_zsig.append(data[i]['jet_trk_z0'][jet][trk]/data[i]['jet_trk_ip3d_z0sig'][jet][trk])
+                            muon_zsig.append(data[i]['jet_trk_ip3d_z0'][jet][trk]/data[i]['jet_trk_ip3d_z0sig'][jet][trk])
 
         #give all our newly created histograms to the plots we initialized
         muon_pt_plot.appendHisto(muon_pt, JetType[jt])
