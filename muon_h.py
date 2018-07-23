@@ -24,57 +24,10 @@ JetType = OrderedDict()
 JetType["bH"] = {"name":"b jets",               "pdgId":5,  "color":"blue"}
 JetType["cH"] = {"name":"c jets",               "pdgId":4,  "color":"green"}
 JetType["li"] = {"name":"light-flavoured jets", "pdgId":0,  "color":"red"}
-JetType["tH"] = {"name":"$\\tau$ jets",         "pdgId":15, "color":"yellow"}
-
-"""
-PtBins = OrderedDict()
-PtBins["20_50"]   = {"name":"jet $p_T$: 20-50 GeV",   "min":20,  "max":50}
-PtBins["50_100"]  = {"name":"jet $p_T$: 50-100 GeV",  "min":50,  "max":100}
-PtBins["100_200"] = {"name":"jet $p_T$: 100-200 GeV", "min":100, "max":200}
-PtBins["200_500"] = {"name":"jet $p_T$: 200-500 GeV", "min":200, "max":500}
-
-EtaBins = OrderedDict()
-EtaBins["0_1"]   = {"name":"$0 \leq jet |\eta| < 1$",   "min":0, "max":1}
-EtaBins["1_2.5"] = {"name":"$1 \leq jet |\eta| < 2.5$", "min":1, "max":2.5}
-"""
-
-#not currently using. used initially to check the unstacked plots
-class UnstackedPlot:
-    def __init__(self, title, axisTitle, data, binning, normBool, logBool, jetType, ptBin, etaBin):
-        self.title     = title
-        self.axisTitle = axisTitle
-
-        self.data      = data
-        self.binning   = binning
-        self.normBool  = normBool
-        self.logBool   = logBool
-
-        self.jetType   = jetType
-        self.ptBin     = ptBin
-        self.etaBin    = etaBin
-
-    def makePlot(self):
-        fig = plt.figure(figsize=(5, 3.5), dpi=100)
-        ax = fig.add_subplot(111)
-
-        if len(self.data)==0: self.normBool = False
-
-        plt.hist(self.data, self.binning, normed = self.normBool, histtype='step', fill=False, color=self.jetType["color"])
-
-        plt.text(1.05, 0.95, self.jetType["name"], transform=ax.transAxes)
-        plt.text(1.05, 0.85, self.ptBin["name"], transform=ax.transAxes)
-        plt.text(1.05, 0.75, self.etaBin["name"], transform=ax.transAxes)
-        plt.text(1.05, 0.65, "N = {0}".format(len(self.data)), transform=ax.transAxes)
-
-        plt.title(self.title)
-        plt.xlabel(self.axisTitle)
-        plt.ylabel("1/N")
-        if self.logBool and len(self.data)!=0: plt.yscale('log')
-        plt.tight_layout()
-        plt.show()
+JetType["tH"] = {"name":"$\\tau$ jets",         "pdgId":15, "color":"orange"}
 
 class StackedPlot:
-    def __init__(self, title, axisTitle, binning, normBool, logBool, jetPtBin, jetEtaBin, muonPtBin, muonEtaBin):
+    def __init__(self, title, axisTitle, binning, normBool, logBool):
         #title of stacked plot
         self.title      = title
         #x-axis title of stacked plot
@@ -87,21 +40,12 @@ class StackedPlot:
         #is the y-axis log?
         self.logBool    = logBool
 
-        #what jet pt bin is the plot?
-        self.jetPtBin   = jetPtBin
-        #what jet eta bin is the plot?
-        self.jetEtaBin  = jetEtaBin
-        #what muon pt bin is the plot?
-        self.muonPtBin  = muonPtBin
-        #what muon eta bin is the plot?
-        self.muonEtaBin = muonEtaBin
-
         #list of individual histograms that will be added to the stacked plot
         self.histoList  = []
 
     #append histograms to the list of histograms mentioned earlier
-    def appendHisto(self,histoToAppend, jetType):
-        self.histoList.append([histoToAppend, jetType])
+    def appendHisto(self,histoToAppend, histType):
+        self.histoList.append([histoToAppend, histType])
 
     def makePlot(self):
         fig = plt.figure(figsize=(5, 4), dpi=100)
@@ -129,10 +73,11 @@ class StackedPlot:
 
         #plot the pt and eta bins for the plot
         plt.text(1.05, 0.55, "$N$ muons = {}".format(ntotal), transform=ax.transAxes)
-        plt.text(1.05, 0.47, "{} GeV $\leq$ jet $p_t$ < {} GeV".format(self.jetPtBin[0], self.jetPtBin[1]), transform=ax.transAxes)
-        plt.text(1.05, 0.39, "{} $\leq$ jet |$\eta$| < {}".format(self.jetEtaBin[0], self.jetEtaBin[1]), transform=ax.transAxes)
-        plt.text(1.05, 0.31, "{} GeV $\leq$ muon $p_t$ < {} GeV".format(self.muonPtBin[0], self.muonPtBin[1]), transform=ax.transAxes)
-        plt.text(1.05, 0.23, "{} $\leq$ muon |$\eta$| < {}".format(self.muonEtaBin[0], self.muonEtaBin[1]), transform=ax.transAxes)
+        plt.text(1.05, 0.47, "jet $p_T$ > 20 GeV/c", transform=ax.transAxes)
+        plt.text(1.05, 0.39, "jet |$\eta$| < 2.5", transform=ax.transAxes)
+        plt.text(1.05, 0.31, "muon $p_T$ > 1 GeV/c", transform=ax.transAxes)
+        plt.text(1.05, 0.23, "muon |$\eta$| < 2.5", transform=ax.transAxes)
+        plt.text(1.05, 0.15, "Overlap Removal = True", transform=ax.transAxes)
 
         plt.title(self.title)
         plt.xlabel(self.axisTitle)
