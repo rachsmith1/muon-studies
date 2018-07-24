@@ -8,6 +8,9 @@ from numpy.lib.recfunctions import stack_arrays
 from root_numpy import root2array, root2rec
 import glob
 
+from ROOT import TDatabasePDG
+from ROOT import TParticlePDG
+
 import matplotlib
 import matplotlib.colors
 import matplotlib.patches as mpatches
@@ -53,31 +56,51 @@ class StackedPlot:
 
         #for the purposes of weighting
         ntotal = 0
+        plotHistoList = []
+        weightList = []
+        colorList = []
+        labelList = []
         for histo in self.histoList:
+            if len(histo[0])==0: continue
+
             ntotal += len(histo[0])
 
+            plotHistoList.append(histo[0])
+            colorList.append(histo[1]["color"])
+            labelList.append(histo[1]["name"])
+
         for histo in self.histoList:
-            #check for empty histograms
             if len(histo[0])==0: continue
 
             weight=1.0
             #weight over the TOTAL # OF MUONS, i.e. all the muons from all of the jet types
             if self.normBool:
                 weight = 1/ntotal
-            weight_list = [weight] * len(histo[0])
+            weightsForHisto = [weight] * len(histo[0])
+            weightList.append(weightsForHisto)
 
-            plt.hist(histo[0], self.binning, weights=weight_list, histtype='step', fill=False, color=histo[1]["color"], label=histo[1]["name"])
+        plt.hist(
+                    plotHistoList,
+                    self.binning,
+                    weights=weightList,
+                    histtype='step',
+                    stacked=False,
+                    fill=False,
+                    color=colorList,
+                    label=labelList
+                )
+
 
         #plot the legend
-        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+        plt.legend(bbox_to_anchor=(1.05, 0.52), loc=2, borderaxespad=0.)
 
         #plot the pt and eta bins for the plot
-        plt.text(1.05, 0.55, "$N$ muons = {}".format(ntotal), transform=ax.transAxes)
-        plt.text(1.05, 0.47, "jet $p_T$ > 20 GeV/c", transform=ax.transAxes)
-        plt.text(1.05, 0.39, "jet |$\eta$| < 2.5", transform=ax.transAxes)
-        plt.text(1.05, 0.31, "muon $p_T$ > 1 GeV/c", transform=ax.transAxes)
-        plt.text(1.05, 0.23, "muon |$\eta$| < 2.5", transform=ax.transAxes)
-        plt.text(1.05, 0.15, "Overlap Removal = True", transform=ax.transAxes)
+        plt.text(1.05, 1.00, "$N$ muons = {}".format(ntotal), transform=ax.transAxes)
+        plt.text(1.05, 0.92, "jet $p_T$ > 20 GeV/c", transform=ax.transAxes)
+        plt.text(1.05, 0.84, "jet |$\eta$| < 2.5", transform=ax.transAxes)
+        plt.text(1.05, 0.76, "muon $p_T$ > 1 GeV/c", transform=ax.transAxes)
+        plt.text(1.05, 0.68, "muon |$\eta$| < 2.5", transform=ax.transAxes)
+        plt.text(1.05, 0.60, "Overlap Removal = True", transform=ax.transAxes)
 
         plt.title(self.title)
         plt.xlabel(self.axisTitle)
