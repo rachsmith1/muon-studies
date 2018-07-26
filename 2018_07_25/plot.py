@@ -45,13 +45,13 @@ def makePlots(data, jetName, muonParentName):
 
     muon_dzero_plot  = StackedPlot("{}, muon parent is {}: Muon $d_0$".format(jetName, muonParentName),
                                   "$d_0$ [mm]",
-                                  np.linspace(0,10,50),
+                                  np.linspace(0,20,50),
                                   True,
                                   True)
 
     muon_zzero_plot  = StackedPlot("{}, muon parent is {}: Muon $z_0$".format(jetName, muonParentName),
                                   "$z_0$ [mm]",
-                                  np.linspace(0,10,50),
+                                  np.linspace(0,50,50),
                                   True,
                                   True)
 
@@ -68,7 +68,7 @@ def makePlots(data, jetName, muonParentName):
                                   np.linspace(-5,5,50),
                                   np.linspace(-5,5,50))
 
-    relIP_plot = BarPlot("Impact parameter placement")
+    relIP_plot = BarPlot("{}, muon parent is {}: IP placement".format(jetName, muonParentName))
 
     #we want jets of a certain flavour and muons with a certain parent
     data["jet_mu_parent_name"] = [DefineParticle(p) for p in data.jet_mu_parent_pdgid]
