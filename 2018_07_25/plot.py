@@ -33,7 +33,7 @@ def makePlots(data, jetName, muonParentName):
 
     muon_ptfrac_plot = StackedPlot("{}, muon parent is {}:".format(jetName, muonParentName) + " ${p_T}^{\mu} / {p_T}^{jet}$",
                                   "${p_T}^{\mu} / {p_T}^{jet}$",
-                                  np.linspace(0,2,50),
+                                  np.linspace(0,5,50),
                                   True,
                                   True)
 
@@ -87,8 +87,8 @@ def makePlots(data, jetName, muonParentName):
     muon_deltar_plot.appendHisto(df_muParentChoice["jet_mu_dR"][(df_muParentChoice["jet_mu_d0"]>0) & (df_muParentChoice["jet_mu_z0"]>0)],   ipDescPos)
     muon_deltar_plot.appendHisto(df_muParentChoice["jet_mu_dR"][(df_muParentChoice["jet_mu_d0"]<=0) & (df_muParentChoice["jet_mu_z0"]<=0)], ipDescNeg)
 
-    muon_ptfrac_plot.appendHisto(df_muParentChoice["jet_mu_pt"][(df_muParentChoice["jet_mu_d0"]>0) & (df_muParentChoice["jet_mu_z0"]>0)]/df_muParentChoice["jet_pt"][(df_muParentChoice["jet_mu_d0"]>0) & (df_muParentChoice["jet_mu_z0"]>0)],     ipDescPos)
-    muon_ptfrac_plot.appendHisto(df_muParentChoice["jet_mu_pt"][(df_muParentChoice["jet_mu_d0"]<=0) & (df_muParentChoice["jet_mu_z0"]<=0)]/df_muParentChoice["jet_pt"][(df_muParentChoice["jet_mu_d0"]<=0) & (df_muParentChoice["jet_mu_z0"]<=0)], ipDescNeg)
+    muon_ptfrac_plot.appendHisto(df_muParentChoice["jet_mu_pt"][(df_muParentChoice["jet_mu_d0"]>0) & (df_muParentChoice["jet_mu_z0"]>0)]/df_muParentChoice["jet_pt_orig"][(df_muParentChoice["jet_mu_d0"]>0) & (df_muParentChoice["jet_mu_z0"]>0)],     ipDescPos)
+    muon_ptfrac_plot.appendHisto(df_muParentChoice["jet_mu_pt"][(df_muParentChoice["jet_mu_d0"]<=0) & (df_muParentChoice["jet_mu_z0"]<=0)]/df_muParentChoice["jet_pt_orig"][(df_muParentChoice["jet_mu_d0"]<=0) & (df_muParentChoice["jet_mu_z0"]<=0)], ipDescNeg)
 
     muon_ptrel_plot.appendHisto([x/GeV for x in df_muParentChoice["jet_mu_pTrel"][(df_muParentChoice["jet_mu_d0"]>0) & (df_muParentChoice["jet_mu_z0"]>0)]],   ipDescPos)
     muon_ptrel_plot.appendHisto([x/GeV for x in df_muParentChoice["jet_mu_pTrel"][(df_muParentChoice["jet_mu_d0"]<=0) & (df_muParentChoice["jet_mu_z0"]<=0)]], ipDescNeg)
